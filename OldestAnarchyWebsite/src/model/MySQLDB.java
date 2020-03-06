@@ -46,11 +46,10 @@ public class MySQLDB {
 
 	
 	public void AddNewUser(User user){
-       String sqlString = "INSERT INTO  users" + " (nickname, password, role)" 
+       String sqlString = "INSERT INTO  users" + " (nickname, password)" 
 							+ "VALUES ('"
-							+ user.getNickName() + "', '" 
-        					+ user.getPassword()  + "', '" 
-							+ user.getRole() + "')";
+							+ user.getNickName() + "', SHA1('" 
+        					+ user.getPassword()  + "'))";	
         try {
         		Statement statement = con.createStatement();
 	            statement.executeUpdate(sqlString);
@@ -61,11 +60,10 @@ public class MySQLDB {
 
 	public boolean ModifyUser(User user){
 	    try {
-		        String updString = "UPDATE users SET password =?, role = ?"
+		        String updString = "UPDATE users SET password =SHA1(?)"
 		        		+ "   WHERE nickname='" + user.getNickName() + "'" ;
 				PreparedStatement statement = con.prepareStatement(updString);
 				statement.setString(3, user.getPassword());
-				statement.setString(4, user.getRole());
 	            statement.executeUpdate();
 			    statement.close();
 			    return true;
@@ -78,7 +76,7 @@ public class MySQLDB {
 	public boolean UserAuthenticate(String name, String pass){
 		try{
 		    Statement statement = con.createStatement();
-            String queryString = "SELECT * FROM users WHERE nickname='" + name + "' and password='" + pass + "'" ;
+            String queryString = "SELECT * FROM users WHERE nickname='" + name + "' and password=SHA1('" + pass + "')" ;
             ResultSet rs = statement.executeQuery(queryString);
             	return rs.next();
  		} catch (Exception e) {

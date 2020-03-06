@@ -8,15 +8,15 @@ function sendMessage() {
 	ajaxPostRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	ajaxPostRequest.onreadystatechange=function(){
 		if (this.readyState == 4 && this.status == 200) {
-			if(document.getElementById('chat').innerHtml==undefined){
-				document.getElementById('chat').innerHtml=this.responseText;
+			if(document.getElementById('chat').innerHTML==undefined){
+				document.getElementById('chat').innerHTML=this.responseText;
 			}else{
 				document.getElementById('chat').innerHTML=document.getElementById('chat').innerHTML+this.responseText;
 			}
 		}
 	}
 	ajaxPostRequest.send("senderName=" + urlParams.get('name') + "&info=" + msg);
-	
+	document.getElementById('text').value='';
 }
 
 function listenToNewMessages() {
@@ -32,6 +32,10 @@ function listenToNewMessages() {
 			listenToNewMessages();
 		}
 	};
+
+	
 	xhttp.open("GET", "ChatServlet", true);
-	xhttp.send();
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams(queryString);
+	xhttp.send("senderName="+urlParams.get('name'));
 }

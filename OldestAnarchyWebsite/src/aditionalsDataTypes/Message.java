@@ -1,11 +1,22 @@
 package aditionalsDataTypes;
 
+import javax.servlet.http.HttpSession;
+
 public class Message {
 	private String senderName;
 	private String info;
-	public Message(String senderName, String info) {
+	private HttpSession senderSession;
+	public Message(String senderName, String info,HttpSession senderSession) {
 		this.senderName = senderName;
 		this.info = info;
+		this.senderSession=senderSession;
+	}
+
+	public HttpSession getSenderSession() {
+		return senderSession;
+	}
+	public void setSenderSession(HttpSession senderSession) {
+		this.senderSession = senderSession;
 	}
 	
 	public String getSenderName() {

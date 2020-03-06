@@ -95,7 +95,7 @@ public class Context {
 				//response.sendRedirect(response.encodeRedirectURL(url));
 			}
 			else {
-				 request.setAttribute("errorMsg",  "שם משתמש או סיסמא אינם נכונים, אנא נסה שוב!");
+				 request.setAttribute("errorMsg",  "lnklknljnljnkjbkubknj");
 				 request.getRequestDispatcher("tofes.jsp").forward(request, response);
 		
 			}
@@ -130,7 +130,7 @@ public class Context {
 		User u = new User();
 		u.setNickName(getFieldFromRequest("nickname"));
 		u.setPassword(getFieldFromRequest("password"));
-		u.setRole(getFieldFromRequest("role"));
+		
 		//update this method to reflect your user object
 		return u;
 	}

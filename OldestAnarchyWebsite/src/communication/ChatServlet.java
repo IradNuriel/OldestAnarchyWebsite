@@ -53,8 +53,9 @@ public class ChatServlet extends HttpServlet {
 		if(f) {
 		}else {
 			activeUsers.add(new SessionWithBuffer(request.getSession()));
-			getServletContext().setAttribute("activeUsers",activeUsers);
+			
 		}
+		getServletContext().setAttribute("activeUsers",activeUsers);
 		response.getWriter().print(s);
 	}
 
@@ -65,7 +66,8 @@ public class ChatServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		
 		
-		postMessage(new Message((String)(request.getParameter("senderName")),(String)(request.getParameter("info"))));
+		postMessage(new Message((String)(request.getParameter("senderName")),(String)(request.getParameter("info")),request.getSession()));
+		for(int i=0;i<1000;i++) {}
 		doGet(request, response);
 		
 	}
@@ -77,8 +79,6 @@ public class ChatServlet extends HttpServlet {
 		activeUsers=(ArrayList<ChatServlet.SessionWithBuffer>)(getServletContext().getAttribute("activeUsers"));
 		
 
-		Queue<Message> temp=new Queue();
-		temp.insert(m);
 		for(SessionWithBuffer userBuf: activeUsers) {
 			userBuf.addMessageToBuffer(m);
 		}
@@ -101,11 +101,13 @@ public class ChatServlet extends HttpServlet {
 		}
 		public String flushBuffer() {
 			String allNewMessages = "";
-			Queue<Message> buf = new Queue<Message>();
 			while(!buffer.isEmpty()) {
 				Message m  = buffer.remove();
-				allNewMessages+="<p style='text-size:12;'>" + m.getSenderName() + ": </p>" +"<p style='text-size:11'>"+ m.getInfo() +"</p>"+ "<br>";
-				
+				if(this.session.equals(m.getSenderSession())) {
+					allNewMessages+="<p class='yourChatMessage'>" + m.getInfo() +"</p>"+ "<br>";
+				}else {
+					allNewMessages+="<p class='notYourChatMessage'> <b>" + m.getSenderName() + " says: </b>" + m.getInfo() +"</p>"+ "<br>";
+				}
 			}
 			return allNewMessages;
 		}
