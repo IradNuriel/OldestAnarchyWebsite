@@ -95,7 +95,7 @@ public class Context {
 				//response.sendRedirect(response.encodeRedirectURL(url));
 			}
 			else {
-				 request.setAttribute("errorMsg",  "lnklknljnljnkjbkubknj");
+				 request.setAttribute("errorMsg",  "could not registered/login");
 				 request.getRequestDispatcher("tofes.jsp").forward(request, response);
 		
 			}
