@@ -23,7 +23,9 @@
 
 			<%
 				if (!ctx.isLoggedIn()) {
-					out.write("<li><a href='tofes.jsp'>כניסה</a></li>");
+					out.write("<li><a href='login.jsp'>כניסה</a></li>");
+					out.write("<li><a href='register.jsp'>הרשמה</a></li>");
+					
 				} else {
 					out.write("<li><a href='MyServlet?cmd=logout'>יציאה</a></li>");
 

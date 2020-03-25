@@ -88,9 +88,11 @@ public class Context {
 		String password= request.getParameter("password");
 		try {
 			if(dbc.UserAuthenticate(nickname, password)) {
+				dbc.updateDate(nickname);
 				this.session.setAttribute(SESSION_KEY_USER, nickname);
 				String url = "home.jsp?name=" + URLEncoder.encode(nickname, "UTF-8");
 				response.sendRedirect(url);
+				
 				//you might need to encode the url in some unresolved cases where sessionID needs to be enforced
 				//response.sendRedirect(response.encodeRedirectURL(url));
 			}
@@ -130,7 +132,7 @@ public class Context {
 		User u = new User();
 		u.setNickName(getFieldFromRequest("nickname"));
 		u.setPassword(getFieldFromRequest("password"));
-		
+		u.setLastDateEntered();
 		//update this method to reflect your user object
 		return u;
 	}

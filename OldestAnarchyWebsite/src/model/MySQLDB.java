@@ -1,6 +1,8 @@
 package model;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,10 +48,11 @@ public class MySQLDB {
 
 	
 	public void AddNewUser(User user){
-       String sqlString = "INSERT INTO  users" + " (nickname, password)" 
+       String sqlString = "INSERT INTO  users" + " (nickname, password, lastdateentered)" 
 							+ "VALUES ('"
 							+ user.getNickName() + "', SHA1('" 
-        					+ user.getPassword()  + "'))";	
+        					+ user.getPassword()  + "'), '"+
+							user.getDate()+"')";	
         try {
         		Statement statement = con.createStatement();
 	            statement.executeUpdate(sqlString);
@@ -115,7 +118,7 @@ public class MySQLDB {
 					User u = new User();
 					u.setNickName(rs.getString(rs.findColumn("nickname")));
 					u.setPassword(rs.getString(rs.findColumn("password")));
-					u.setRole(rs.getString(rs.findColumn("role")));
+					u.setLastDateEntered();
 					u.setmID(rs.getInt(rs.findColumn("id")));
 					result.add(u);
 					
@@ -164,7 +167,26 @@ public class MySQLDB {
 				return false;
 			  }
 	}
-
+	
+	public boolean updateDate(String nickName) {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		LocalDateTime now = LocalDateTime.now();  
+		String date=dtf.format(now);
+		String updateString="UPDATE users SET lastdateentered=? WHERE nickname=?";
+		PreparedStatement statement;
+		try {
+			statement = con.prepareStatement(updateString);
+			statement.setString(1, date);
+			statement.setString(2, nickName);
+	        statement.executeUpdate();
+	        return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("error updating date");
+			return false;
+		}
+		
+	}
 	
 	public void Close() {
 		try {

@@ -1,19 +1,22 @@
 package model;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
 public class User {
 	private final String DEF_ROLE="regular";
 	
-	String nickName, password, role;
+	String nickName, password, role, lastDateEntered;
 	int mID;	//model id of the user, retrieved from DB
 	
-	public String getRole() {
-		return role;
+	public String getDate() {
+		return lastDateEntered;
 	}
-	public void setRole(String role) {
-		if (role.equals(""))
-			this.role = DEF_ROLE;
-		else
-			this.role = role;
+	public void setLastDateEntered() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		LocalDateTime now = LocalDateTime.now();  
+		lastDateEntered=dtf.format(now);  
 	}
 	
 	public String getNickName() {
