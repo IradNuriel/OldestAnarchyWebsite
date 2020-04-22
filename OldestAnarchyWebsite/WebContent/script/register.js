@@ -18,6 +18,7 @@ function sendToServer(){
 	if(document.getElementById("form").checkValidity){
 		window.alert("Thank you for registering");
 	}
+
 }
 
 
