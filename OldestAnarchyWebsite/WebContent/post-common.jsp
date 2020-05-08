@@ -11,8 +11,7 @@
 <body>
 <div class="common bottom">
 <ul>
-<li><a href="error.jsp">זכויות יוצרים</a></li>
-<li><a href="error.jsp">דברים אחרים...</a></li>
+<li><a href="copyright.jsp">זכויות יוצרים</a></li>
 </ul>
 </div>
 </body>

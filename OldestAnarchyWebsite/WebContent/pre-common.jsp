@@ -28,8 +28,10 @@
 					
 				} else {
 					out.write("<li><a href='MyServlet?cmd=logout'>יציאה</a></li>");
-
 					out.write("<li><a href='chat.jsp?name=" + ctx.getFieldFromRequest("name") + "'>צאט</a></li>");
+					if(/*ctx.isManager()*/ctx.getFieldFromRequest("name").equals("irad")){
+						out.write("<li><a href='ownerSeeDates.jsp'>ראה זמני התחברות אחרונים</a></li>");	
+					}
 				}
 			%>
 		</ul>

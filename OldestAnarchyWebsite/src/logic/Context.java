@@ -2,6 +2,7 @@ package logic;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -11,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
-
+import model.Chatter;
 import model.MySQLDB;
 import model.User;
 
@@ -65,6 +66,18 @@ public class Context {
 		out.write("</script>");
 	}
 	
+	public String getChattersDates() {
+		String result="";
+		ArrayList<Chatter> chatters = dbc.getAllChatters();
+		for(Chatter c: chatters) {
+			result+="<tr>";
+			result+="<td>"+c.getName()+"</td>";
+			result+="<td>"+c.getLastDateEntered()+"</td>";
+			result+="</tr>";
+		}
+		
+		return result;
+	}
 	
 	public void handleLogout(){
 		this.session.removeAttribute(SESSION_KEY_USER);
@@ -80,7 +93,7 @@ public class Context {
 	}
 	
 	public boolean isManager(){
-		return (this.session.getAttribute(SESSION_KEY_USER)!= null);
+		return dbc.isManager(request.getParameter("nickname"));
 	}
 	
 	public void handleLogin() {
@@ -149,4 +162,8 @@ public class Context {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
+	
 }
