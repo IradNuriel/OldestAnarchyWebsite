@@ -93,6 +93,28 @@ public class MySQLDB {
 		}
 	}
 
+	public String isUserConnected(String nickname) {
+		try {
+			Statement statement = con.createStatement();
+			String queryString = "SELECT * FROM users WHERE nickname='" + nickname + "' and isConnected=1";
+			ResultSet rs = statement.executeQuery(queryString);
+			if (rs.next()) {
+				return "connected";
+			} else {
+				queryString = "SELECT * FROM users WHERE nickname='" + nickname + "' and isConnected=0";
+				rs = statement.executeQuery(queryString);
+				if (rs.next()) {
+					return "not connected";
+				} else {
+					return "nouser";
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("error in quering the DB");
+			return "error";
+		}
+	}
+
 	public ArrayList<Chatter> getAllChatters() {
 		Statement statement;
 		ResultSet rs;
@@ -208,6 +230,22 @@ public class MySQLDB {
 			return false;
 		}
 
+	}
+
+	public boolean updateConnected(String nickname, boolean connected) {
+		String updateString = "UPDATE users SET isConnected=? WHERE nickname=?";
+		PreparedStatement statement;
+		try {
+			statement = con.prepareStatement(updateString);
+			statement.setBoolean(1, connected);
+			statement.setString(2, nickname);
+			statement.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("error updating connection state");
+			return false;
+		}
 	}
 
 	public void Close() {

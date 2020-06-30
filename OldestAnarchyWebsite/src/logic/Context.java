@@ -1,4 +1,5 @@
 package logic;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
@@ -23,25 +24,23 @@ import model.User;
 //and the other used from jsp pages
 public class Context {
 	HttpServletRequest request;
-	HttpServletResponse  response;
+	HttpServletResponse response;
 	HttpSession session;
 	ServletContext application;
 	PrintWriter out;
-	static MySQLDB dbc= new MySQLDB();
-	
-	
-	private final String SESSION_KEY_USER= "currentUser";
-	
+	static MySQLDB dbc = new MySQLDB();
+
+	private final String SESSION_KEY_USER = "currentUser";
+
 //used mainly from JSP	
 	public Context(PageContext pContext) throws Exception {
-		this((HttpServletRequest)pContext.getRequest(), 
-				(HttpServletResponse)pContext.getResponse());
+		this((HttpServletRequest) pContext.getRequest(), (HttpServletResponse) pContext.getResponse());
 	}
-	
+
 //used mainly from servlets...
 	public Context(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.request = request;
-		
+
 		this.response = response;
 		this.session = request.getSession();
 		this.application = this.session.getServletContext();
@@ -49,85 +48,119 @@ public class Context {
 			request.setCharacterEncoding("utf-8");
 			response.setCharacterEncoding("utf-8");
 			this.out = response.getWriter();
-			
+
 			if (dbc.IsAlive() == false) {
-				throw(new Exception("no db connection"));
+				throw (new Exception("no db connection"));
 			}
-		} catch (IOException e) {};
-		
+		} catch (IOException e) {
+		}
+		;
+
 	}
-	
-	public void insertAlertDlg(String msg, String forwardToPage){
+
+	public void insertAlertDlg(String msg, String forwardToPage) {
 		out.write("<script charset=\"UTF-8\">");
 		out.write("alert('" + msg + "');");
-		//out.write("setTimeout(function(){window.location.href='secondpage.jsp'},1000);");
-		if (forwardToPage!= null)
-			out.write("window.location.href='"+ forwardToPage + "';");
+		// out.write("setTimeout(function(){window.location.href='secondpage.jsp'},1000);");
+		if (forwardToPage != null)
+			out.write("window.location.href='" + forwardToPage + "';");
 		out.write("</script>");
 	}
-	
+
 	public String getChattersDates() {
-		String result="";
+		String result = "";
 		ArrayList<Chatter> chatters = dbc.getAllChatters();
-		for(Chatter c: chatters) {
-			result+="<tr>";
-			result+="<td>"+c.getName()+"</td>";
-			result+="<td>"+c.getLastDateEntered()+"</td>";
-			result+="</tr>";
+		for (Chatter c : chatters) {
+			result += "<tr class='table1'>";
+			result += "<th class='table1'>" + c.getName() + "</th>";
+			result += "<th class='table1'>" + c.getLastDateEntered() + "</th>";
+			result += "</tr>";
 		}
-		
+
 		return result;
 	}
-	
-	public void handleLogout(){
-		this.session.removeAttribute(SESSION_KEY_USER);
+
+	public void handleDeleteUser() {
+		String nickname = request.getParameter("nickname");
 		try {
-			response.sendRedirect("home.jsp");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			String state = dbc.isUserConnected(nickname);
+			if (state.equals("not connected")) {
+				dbc.DeleteUser(nickname);
+				response.sendRedirect("ownerSeeDates.jsp");
+			} else if (state.equals("connected")) {
+				request.setAttribute("errorMsg",
+						"could not delete " + nickname + " due to him being connected, try again later");
+				request.getRequestDispatcher("ownerSeeDates.jsp").forward(request, response);
+			} else if (state.equals("nouser")) {
+				request.setAttribute("errorMsg",
+						"could not delete " + nickname + " due to the fact that there is no user called " + nickname);
+				request.getRequestDispatcher("ownerSeeDates.jsp").forward(request, response);
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	public boolean isLoggedIn(){
-		return (this.session.getAttribute(SESSION_KEY_USER)!= null);
-	}
-	
-	public boolean isManager(){
-		return dbc.isManager(request.getParameter("nickname"));
-	}
-	
-	public void handleLogin() {
-		String nickname= request.getParameter("nickname");
-		String password= request.getParameter("password");
+
+	public void handleLogout() {
+		String name = getUserNickName();
+		this.session.removeAttribute(SESSION_KEY_USER);
 		try {
-			if(dbc.UserAuthenticate(nickname, password)) {
+			dbc.updateConnected(name, false);
+			response.sendRedirect("home.jsp");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isLoggedIn() {
+		return (this.session.getAttribute(SESSION_KEY_USER) != null);
+	}
+
+	public boolean isManager() {
+		return dbc.isManager((String) this.session.getAttribute(SESSION_KEY_USER));
+	}
+
+	public String getUserNickName() {
+		if (this.isLoggedIn()) {
+			return (String) this.session.getAttribute(SESSION_KEY_USER);
+		} else {
+			return "";
+		}
+	}
+
+	public void handleLogin() {
+		String nickname = request.getParameter("nickname");
+		String password = request.getParameter("password");
+		try {
+			if (dbc.UserAuthenticate(nickname, password)) {
 				dbc.updateDate(nickname);
+				dbc.updateConnected(nickname, true);
 				this.session.setAttribute(SESSION_KEY_USER, nickname);
 				String url = "home.jsp?name=" + URLEncoder.encode(nickname, "UTF-8");
 				response.sendRedirect(url);
-				
-				//you might need to encode the url in some unresolved cases where sessionID needs to be enforced
-				//response.sendRedirect(response.encodeRedirectURL(url));
-			}
-			else {
-				 request.setAttribute("errorMsg",  "could not registered/login");
-				 request.getRequestDispatcher("tofes.jsp").forward(request, response);
-		
+
+				// you might need to encode the url in some unresolved cases where sessionID
+				// needs to be enforced
+				// response.sendRedirect(response.encodeRedirectURL(url));
+			} else {
+				request.setAttribute("errorMsg", "could not registered/login");
+				request.getRequestDispatcher("login.jsp").forward(request, response);
+
 			}
 		} catch (IOException | ServletException e) {
 			e.printStackTrace();
-		} 
+		}
 	}
+
 	public void handleRegistration() {
-		String nickname= request.getParameter("nickname");
-		if (userCanBeRegistered(nickname)){
+		String nickname = request.getParameter("nickname");
+		if (userCanBeRegistered(nickname)) {
 			dbc.AddNewUser(userFromRequest());
 			handleLogin();
-		}
-		else {
+		} else {
 			request.setAttribute("error", "This user name is already taken, please choose another one and try again");
 			try {
-				request.getRequestDispatcher("tofes.jsp").forward(request, response);
+				request.getRequestDispatcher("register.jsp").forward(request, response);
 			} catch (ServletException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -135,25 +168,24 @@ public class Context {
 		}
 	}
 
-	public String getFieldFromRequest(String key)
-	{
+	public String getFieldFromRequest(String key) {
 		String x = request.getParameter(key);
-		return (request.getParameter(key) != null? request.getParameter(key): "");
+		return (request.getParameter(key) != null ? request.getParameter(key) : "");
 	}
-	
+
 	private User userFromRequest() {
 		User u = new User();
 		u.setNickName(getFieldFromRequest("nickname"));
 		u.setPassword(getFieldFromRequest("password"));
 		u.setLastDateEntered();
-		//update this method to reflect your user object
+		// update this method to reflect your user object
 		return u;
 	}
-	
-	private boolean userCanBeRegistered(String nickname){
+
+	private boolean userCanBeRegistered(String nickname) {
 		return !dbc.UserExists(nickname);
 	}
-	
+
 	public void handleUnknownRequest() {
 		try {
 			response.sendRedirect("home.jsp");
@@ -162,8 +194,5 @@ public class Context {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
-	
+
 }

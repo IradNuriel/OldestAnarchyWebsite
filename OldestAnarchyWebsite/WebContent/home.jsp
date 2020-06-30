@@ -20,7 +20,7 @@
 	<div class="center">
 
 		<%
-			String name = ctx.getFieldFromRequest("name");
+			String name = ctx.getUserNickName();
 			out.write("<p id='welcome-p'>ברוך הבא  " + (name.equals("") ? "אורח" : name));
 		%>
 

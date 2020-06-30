@@ -1,16 +1,17 @@
-.yourChatMessage{
-	text-size:12sp;
+.yourChatMessage {
+	text-size: 12sp;
 	font-family: sans-serif;
-	text-align:right;	
-	background-color:#66ff66;
-	width:500px;
+	text-align: right;
+	background-color: #66ff66;
+	width: 500px;
+	direction: ltr;
 }
 
-
-.notYourChatMessage{
-	text-size:12sp;
+.notYourChatMessage {
+	text-size: 12sp;
 	font-family: sans-serif;
-	text-align:left;	
-	background-color:#00ffff;
-	width:500px;
+	text-align: left;
+	background-color: #00ffff;
+	width: 500px;
+	direction:ltr;
 }

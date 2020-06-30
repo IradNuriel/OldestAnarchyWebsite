@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class User {
-	private final String DEF_ROLE="regular";
+	private final String DEF_ROLE="user";
 	
 	String nickName, password, role, lastDateEntered;
 	int mID;	//model id of the user, retrieved from DB

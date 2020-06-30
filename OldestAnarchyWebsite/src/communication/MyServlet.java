@@ -15,19 +15,21 @@ import logic.Context;
 @WebServlet("/MyServlet")
 public class MyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public MyServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public MyServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		Context ctx;
 		try {
 			ctx = new Context(request, response);
@@ -40,7 +42,7 @@ public class MyServlet extends HttpServlet {
 		if (command == null)
 			ctx.handleUnknownRequest();
 		else {
-			switch(command) {
+			switch (command) {
 			case "register":
 				ctx.handleRegistration();
 				break;
@@ -50,6 +52,9 @@ public class MyServlet extends HttpServlet {
 			case "logout":
 				ctx.handleLogout();
 				break;
+			case "delete":
+				ctx.handleDeleteUser();
+				break;
 			case "other":
 				response.getWriter().print("<p style='font-size: 24px'>I don't understand you!!!</p>");
 				break;
@@ -57,13 +62,15 @@ public class MyServlet extends HttpServlet {
 				ctx.handleUnknownRequest();
 			}
 		}
-			
+
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
