@@ -98,12 +98,12 @@ public class MySQLDB {
 			Statement statement = con.createStatement();
 			String queryString = "SELECT * FROM users WHERE nickname='" + nickname + "' and isConnected=1";
 			ResultSet rs = statement.executeQuery(queryString);
-			if (rs.next()) {
+			if (((rs != null) && (rs.next()))) {
 				return "connected";
 			} else {
 				queryString = "SELECT * FROM users WHERE nickname='" + nickname + "' and isConnected=0";
 				rs = statement.executeQuery(queryString);
-				if (rs.next()) {
+				if (((rs != null) && (rs.next()))) {
 					return "not connected";
 				} else {
 					return "nouser";

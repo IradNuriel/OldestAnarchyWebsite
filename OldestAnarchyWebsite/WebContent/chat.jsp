@@ -17,7 +17,7 @@
 		style="height: 50%; width: 100%; text-align: center; padding: 70px 450px;"
 		id="chat"></div>
 	<div style="height: 10%; text-align: center;">
-		<input type="button" onclick="sendMessage('<%=ctx.getUserNickName() %>')" /> 
+		<input type="button" value='send message' onclick="sendMessage('<%=ctx.getUserNickName() %>')" /> 
 			<input id="text" type="text" style="direction:ltr" />
 	</div>
 	<%@ include file="post-common.jsp"%>
